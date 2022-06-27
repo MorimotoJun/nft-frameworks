@@ -2,14 +2,12 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 
 contract Normal1155 is ERC1155, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds; 
+    uint256 private _tokenIds; 
     uint256 public unitPrice = 0.05 ether;
     uint256 public maxSupply = 3000;
     uint256 public maxWlAmount = 3;
@@ -28,7 +26,7 @@ contract Normal1155 is ERC1155, Ownable {
     }
 
     modifier mintCompliance(uint256 amount, string memory type_) {
-        require((_tokenIds.current() + amount) <= maxSupply, "Too many mint.");
+        require((_tokenIds + amount) <= maxSupply, "Too many mint.");
         _;
     }
 
@@ -37,7 +35,7 @@ contract Normal1155 is ERC1155, Ownable {
     }
 
     function totalSupply() public view virtual returns (uint256) {
-        return _tokenIds.current();
+        return _tokenIds;
     }
 
     function walletOfOwner(address owner) public view returns (uint256[] memory) {
@@ -58,8 +56,8 @@ contract Normal1155 is ERC1155, Ownable {
         while (
             ind < amount
         ) {
-            _tokenIds.increment();
-            uint256 id = _tokenIds.current();
+            _tokenIds++;
+            uint256 id = _tokenIds;
             ids[ind] = id;
             amounts[ind] = 1;
             ind++;
